@@ -4,6 +4,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 
+import com.unascribed.drogtor.util.CommandRegistration;
+import com.unascribed.drogtor.util.DrogtorPlayer;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.command.argument.ColorArgumentType;
 import net.minecraft.server.command.ServerCommandSource;

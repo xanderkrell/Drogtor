@@ -1,4 +1,4 @@
-package com.unascribed.drogtor;
+package com.unascribed.drogtor.util;
 
 import java.util.function.BiConsumer;
 

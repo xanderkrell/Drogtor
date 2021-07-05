@@ -1,5 +1,7 @@
 package com.unascribed.drogtor.mixin;
 
+import com.unascribed.drogtor.util.DrogtorPlayer;
+import com.unascribed.drogtor.util.ForgeHelper;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -7,13 +9,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.unascribed.drogtor.DrogtorPlayer;
-import com.unascribed.drogtor.ForgeHelper;
-
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket.Action;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,8 +35,8 @@ public abstract class MixinPlayerEntity extends LivingEntity implements DrogtorP
 	private String drogtor$namecard;
 	private Formatting drogtor$namecolor;
 	
-	@Inject(at = @At("TAIL"), method = "writeCustomDataToTag(Lnet/minecraft/nbt/CompoundTag;)V")
-	public void writeCustomDataToTag(CompoundTag tag, CallbackInfo ci) {
+	@Inject(at = @At("TAIL"), method = "writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V")
+	public void writeCustomDataToTag(NbtCompound tag, CallbackInfo ci) {
 		if (drogtor$nickname != null) {
 			tag.putString("drogtor:nickname", drogtor$nickname);
 		}
@@ -49,8 +48,8 @@ public abstract class MixinPlayerEntity extends LivingEntity implements DrogtorP
 		}
 	}
 	
-	@Inject(at = @At("TAIL"), method = "readCustomDataFromTag(Lnet/minecraft/nbt/CompoundTag;)V")
-	public void readCustomDataFromTag(CompoundTag tag, CallbackInfo ci) {
+	@Inject(at = @At("TAIL"), method = "readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V")
+	public void readCustomDataFromTag(NbtCompound tag, CallbackInfo ci) {
 		drogtor$nickname = tag.contains("drogtor:nickname", NbtType.STRING) ? tag.getString("drogtor:nickname") : null;
 		drogtor$namecard = tag.contains("drogtor:namecard", NbtType.STRING) ? tag.getString("drogtor:namecard") : null;
 		drogtor$namecolor = tag.contains("drogtor:namecolor", NbtType.STRING) ? Formatting.byName(tag.getString("drogtor:namecolor")) : null;

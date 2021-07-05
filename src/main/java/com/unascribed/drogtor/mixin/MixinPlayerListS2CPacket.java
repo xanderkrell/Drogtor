@@ -1,19 +1,17 @@
 package com.unascribed.drogtor.mixin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import com.mojang.authlib.GameProfile;
-import com.unascribed.drogtor.DrogtorPlayer;
+import com.unascribed.drogtor.util.DrogtorPlayer;
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 //I'm sorry.
 @Mixin(PlayerListS2CPacket.class)
@@ -29,8 +27,8 @@ public class MixinPlayerListS2CPacket {
 		}
 	}
 
-	@Inject(method = "<init>(Lnet/minecraft/network/packet/s2c/play/PlayerListS2CPacket$Action;Ljava/lang/Iterable;)V", at = @At("RETURN"))
-	private void cachePlayerIdsIterable(PlayerListS2CPacket.Action action, Iterable<ServerPlayerEntity> players, CallbackInfo info) {
+	@Inject(method = "<init>(Lnet/minecraft/network/packet/s2c/play/PlayerListS2CPacket$Action;Ljava/util/Collection;)V", at = @At("RETURN"))
+	private void cachePlayerIdsIterable(PlayerListS2CPacket.Action action, Collection<ServerPlayerEntity> players, CallbackInfo info) {
 		for (ServerPlayerEntity player : players) {
 			if (player instanceof DrogtorPlayer && ((DrogtorPlayer) player).drogtor$isNamecardActive()) {
 				drogtor$playerIdMap.put(player.getUuid(), ((DrogtorPlayer) player).drogtor$getNamecard());
@@ -38,12 +36,15 @@ public class MixinPlayerListS2CPacket {
 		}
 	}
 
+	// no clue how to fix this. mixin into enum method? who knows. not me
+
 	/**
 	 * @author b0undarybreaker
 	 * @reason Replace the string ID in the sync packet with the Drogtor nickname
-	 */
-	@Redirect(method = "write", at = @At(value = "INVOKE", target = "com/mojang/authlib/GameProfile.getName()Ljava/lang/String;"))
-	private String replacePlayerName(GameProfile profile) {
-		return drogtor$playerIdMap.getOrDefault(profile.getId(), profile.getName());
-	}
+	 *
+	 * @Redirect(method = "write", at = @At(value = "INVOKE", target = "com/mojang/authlib/GameProfile.getName()Ljava/lang/String;"))
+	 * private String replacePlayerName(GameProfile profile) {
+	 *	return drogtor$playerIdMap.getOrDefault(profile.getId(), profile.getName());
+	 * }
+	*/
 }

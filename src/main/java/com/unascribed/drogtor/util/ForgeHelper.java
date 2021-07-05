@@ -1,4 +1,4 @@
-package com.unascribed.drogtor;
+package com.unascribed.drogtor.util;
 
 import net.minecraft.entity.player.PlayerEntity;
 
